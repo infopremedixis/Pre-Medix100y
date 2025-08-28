@@ -1,0 +1,1408 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Medix 2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --option-bg: #ffffff;
+            --option-hover: #f1f3ff;
+            --option-selected: #4361ee;
+            --option-correct: #4ade80;
+            --option-incorrect: #f87171;
+            --answered: #4cc9f0;
+            --current: #f72585;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--secondary), var(--primary), var(--secondary));
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 8px;
+        }
+
+        .social-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px;
+            border-radius: 8px;
+            background: var(--light);
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            font-size: 12px;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-btn.blog {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+        }
+
+        .social-btn.whatsapp {
+            background: linear-gradient(45deg, #25d366, #128c7e);
+            color: white;
+        }
+
+        .social-btn.contact {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+        }
+
+        .login-form, .student-form, .quiz-container, .result-container {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 13px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-info {
+            background: var(--info);
+        }
+
+        .timer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background: var(--light);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .progress-container {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+
+        .question-btn {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: var(--light);
+            border: 1px solid #ddd;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .question-btn:hover {
+            background: var(--option-hover);
+            border-color: var(--primary);
+        }
+
+        .question-btn.current {
+            background: var(--current);
+            color: white;
+            border-color: var(--current);
+        }
+
+        .question-btn.answered {
+            background: var(--answered);
+            color: white;
+            border-color: var(--answered);
+        }
+
+        .question {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            padding: 10px;
+            background: var(--option-bg);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .option:hover {
+            background: var(--option-hover);
+            border-color: var(--primary);
+        }
+
+        .option.selected {
+            background: var(--option-selected);
+            color: white;
+            border-color: var(--option-selected);
+        }
+
+        .option.correct {
+            background: var(--option-correct);
+            color: white;
+            border-color: var(--option-correct);
+        }
+
+        .option.incorrect {
+            background: var(--option-incorrect);
+            color: white;
+            border-color: var(--option-incorrect);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .navigation-buttons button {
+            flex: 1;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .result-table th, .result-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .result-table th {
+            background: var(--light);
+            font-weight: 600;
+        }
+
+        .result-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .student-info {
+            background: var(--light);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .student-info h3 {
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .reasoning-container {
+            margin-top: 20px;
+        }
+
+        .reasoning-item {
+            background: var(--light);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .reasoning-item h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .reasoning-item p {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .icon {
+            margin-right: 6px;
+            font-size: 14px;
+        }
+
+        .whatsapp-fixed {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: linear-gradient(45deg, #25d366, #128c7e);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            animation: pulse 2s infinite;
+            text-decoration: none;
+        }
+
+        .error {
+            color: #e63946;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .reasoning-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .modal-header h3 {
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .social-buttons {
+                flex-direction: column;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+            }
+            
+            body {
+                font-size: 13px;
+                padding: 10px;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+
+            .question-nav {
+                gap: 5px;
+            }
+
+            .question-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Pre-Medix 2025</h1>
+            <p>Test No: Pre-Medix-2030</p>
+        </div>
+        
+        <div class="content">
+            <div class="social-buttons">
+                <a href="https://pre-medix.blogspot.com/?m=1" class="social-btn blog" target="_blank">
+                    <i class="fas fa-blog icon"></i> Blogger Website
+                </a>
+                <a href="https://whatsapp.com/channel/0029VbBGhht7j6g3r478FG0i" class="social-btn whatsapp" target="_blank">
+                    <i class="fab fa-whatsapp icon"></i> WhatsApp Channel
+                </a>
+                <a href="mailto:info.premedixis@gmail.com" class="social-btn contact">
+                    <i class="fas fa-envelope icon"></i> Contact Us
+                </a>
+            </div>
+            
+            <div id="login-form" class="login-form active">
+                <div class="form-group">
+                    <label for="access-code">Access Code</label>
+                    <input type="password" id="access-code" class="form-control" placeholder="Enter your access code">
+                    <div id="login-error" class="error">Invalid access code. Please try again.</div>
+                </div>
+                <button id="login-btn" class="btn btn-block">Access Quiz</button>
+            </div>
+            
+            <div id="student-form" class="student-form">
+                <h2 style="text-align: center; margin-bottom: 15px; font-size: 16px;">Student Information</h2>
+                <div class="form-group">
+                    <label for="student-name">Student Name</label>
+                    <input type="text" id="student-name" class="form-control" placeholder="Enter your full name">
+                    <div id="name-error" class="error">Please enter your name</div>
+                </div>
+                <div class="form-group">
+                    <label for="father-name">Father's Name</label>
+                    <input type="text" id="father-name" class="form-control" placeholder="Enter your father's name">
+                    <div id="father-error" class="error">Please enter your father's name</div>
+                </div>
+                <div class="form-group">
+                    <label for="mdcat-appearance">MDCAT Appearance</label>
+                    <select id="mdcat-appearance" class="form-control">
+                        <option value="">Select your status</option>
+                        <option value="fresh">Fresh</option>
+                        <option value="repeater">Repeater</option>
+                    </select>
+                    <div id="mdcat-error" class="error">Please select your MDCAT status</div>
+                </div>
+                <div class="form-group">
+                    <label for="fsc-marks">FSC Marks Obtained</label>
+                    <input type="number" id="fsc-marks" class="form-control" placeholder="Enter your FSC marks" min="0" max="1200">
+                    <div id="fsc-error" class="error">Please enter valid FSC marks</div>
+                </div>
+                <div class="form-group">
+                    <label for="fsc-total">FSC Total Marks</label>
+                    <select id="fsc-total" class="form-control">
+                        <option value="1100">1100</option>
+                        <option value="1200">1200</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="metric-marks">Metric Marks Obtained</label>
+                    <input type="number" id="metric-marks" class="form-control" placeholder="Enter your Metric marks" min="0" max="1200">
+                    <div id="metric-error" class="error">Please enter valid Metric marks</div>
+                </div>
+                <div class="form-group">
+                    <label for="metric-total">Metric Total Marks</label>
+                    <select id="metric-total" class="form-control">
+                        <option value="1100">1100</option>
+                        <option value="1200">1200</option>
+                    </select>
+                </div>
+                <button id="start-quiz-btn" class="btn btn-block">Start Quiz</button>
+            </div>
+            
+            <div id="quiz-container" class="quiz-container">
+                <div class="timer-container">
+                    <div>Question Timer: <span id="question-timer">01:00</span></div>
+                    <div>Total Timer: <span id="total-timer">05:00</span></div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+                </div>
+                
+                <div class="question-nav" id="question-nav">
+                    </div>
+                
+                <div class="question" id="question"></div>
+                
+                <div class="options-container" id="options-container">
+                    </div>
+                
+                <div class="navigation-buttons">
+                    <button id="back-btn" class="btn"><i class="fas fa-arrow-left icon"></i> Back</button>
+                    <button id="reasoning-btn" class="btn btn-info"><i class="fas fa-lightbulb icon"></i> Show Reasoning</button>
+                    <button id="skip-btn" class="btn btn-warning"><i class="fas fa-forward icon"></i> Skip</button>
+                    <button id="next-btn" class="btn btn-success">Next <i class="fas fa-arrow-right icon"></i></button>
+                    <button id="submit-quiz-btn" class="btn btn-info"><i class="fas fa-paper-plane icon"></i> Submit</button>
+                </div>
+            </div>
+            
+            <div id="result-container" class="result-container">
+                <div class="student-info" id="student-info">
+                    </div>
+                
+                <h2 style="font-size: 16px; margin-bottom: 12px;">Quiz Results</h2>
+                <table class="result-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>Total Correct</td>
+                        <td id="total-correct">0</td>
+                    </tr>
+                    <tr>
+                        <td>Total Incorrect</td>
+                        <td id="total-incorrect">0</td>
+                    </tr>
+                    <tr>
+                        <td>Total Skipped</td>
+                        <td id="total-skipped">0</td>
+                    </tr>
+                    <tr>
+                        <td>Marks Obtained</td>
+                        <td id="marks-obtained">0</td>
+                    </tr>
+                    <tr>
+                        <td>Percentage</td>
+                        <td id="percentage">0%</td>
+                    </tr>
+                </table>
+                
+                <div class="navigation-buttons">
+                    <button id="retake-quiz-btn" class="btn btn-warning"><i class="fas fa-redo icon"></i> Retake Quiz</button>
+                    <button id="show-reasoning-btn" class="btn btn-info"><i class="fas fa-book-open icon"></i> Show All Reasoning</button>
+                    <a href="https://whatsapp.com/channel/0029VbBGhht7j6g3r478FG0i" class="btn btn-success" target="_blank">
+                        <i class="fab fa-whatsapp icon"></i> Follow WhatsApp Channel
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="reasoning-modal" id="reasoning-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Question Explanation</h3>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <div id="modal-body">
+                </div>
+        </div>
+    </div>
+    
+    <a href="https://whatsapp.com/channel/0029VbBGhht7j6g3r478FG0i" class="whatsapp-fixed" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script>
+        // Quiz data
+        const quizData = [
+            {
+                question: "The scrotum's primary function is to:",
+                options: ["Produce testosterone", "Store mature sperm", "Maintain a temperature lower than core body temperature", "Secrete seminal fluid"],
+                correct: 2,
+                reasoning: "The text states that the testes work best at temperatures slightly less than core body temperature (about 35°C), and the scrotum is the skin pouch that holds them outside the abdomen to achieve this."
+            },
+            {
+                question: "Spermatogenesis, the process of sperm formation, occurs in the:",
+                options: ["Epididymis", "Vas deferens", "Seminiferous tubules", "Prostate gland"],
+                correct: 2,
+                reasoning: "The document explicitly mentions that the process of spermatogenesis takes place in the seminiferous tubules of the testes."
+            },
+            {
+                question: "Which cells are responsible for the production of the hormone testosterone?",
+                options: ["Sertoli cells", "Spermatogonia", "Leydig cells", "Primary spermatocytes"],
+                correct: 2,
+                reasoning: "The text identifies Leydig cells, present between the seminiferous tubules, as the producers of the male sex hormone testosterone."
+            },
+            {
+                question: "The epididymis is best described as a site for:",
+                options: ["Sperm production and testosterone secretion", "Transport, temporary storage, and maturation of sperm", "Production of fructose-rich seminal fluid", "Neutralizing urinary acidity in the urethra"],
+                correct: 1,
+                reasoning: "The document states the epididymis functions in the transport and storage of sperm, where they are nourished and gain motility."
+            },
+            {
+                question: "The component of semen that is alkaline and contains fructose to provide energy for sperm is secreted by the:",
+                options: ["Prostate gland", "Bulbourethral glands", "Seminal vesicles", "Epididymis"],
+                correct: 2,
+                reasoning: "The seminal vesicles are described as providing an alkaline fluid containing fructose sugar, which enhances sperm motility."
+            },
+            {
+                question: "What is the role of prostaglandins present in semen?",
+                options: ["To provide a nutrient source for the sperm", "To neutralize the acidity of the female reproductive tract", "To decrease mucus viscosity and stimulate uterine contractions", "To coagulate the semen after ejaculation"],
+                correct: 2,
+                reasoning: "The text states prostaglandins decrease the viscosity of cervical mucus and stimulate reverse peristalsis in the uterus, aiding sperm movement."
+            },
+            {
+                question: "The acrosome of a sperm cell is derived from which organelle and contains enzymes for:",
+                options: ["Mitochondria; energy production", "Nucleus; genetic material storage", "Golgi apparatus; egg penetration", "Centriole; tail formation"],
+                correct: 2,
+                reasoning: "The document indicates the acrosome is produced by the Golgi apparatus and contains hydrolytic enzymes like hyaluronidase to penetrate the egg."
+            },
+            {
+                question: "Which pituitary hormone directly stimulates the Leydig cells to secrete testosterone?",
+                options: ["Follicle-Stimulating Hormone (FSH)", "Luteinizing Hormone (LH)", "Gonadotropin-Releasing Hormone (GnRH)", "Inhibin"],
+                correct: 1,
+                reasoning: "The text explains that LH stimulates Leydig cells to release testosterone."
+            },
+            {
+                question: "Inhibin hormone, produced by Sertoli cells, primarily functions to:",
+                options: ["Stimulate spermatogenesis", "Inhibit the release of FSH and GnRH", "Promote the development of male secondary sexual characteristics", "Stimulate the production of LH"],
+                correct: 1,
+                reasoning: "The document states that when sperm count is high, inhibin release increases to inhibit the anterior pituitary's release of FSH and the hypothalamus's release of GnRH."
+            },
+            {
+                question: "The middle piece of a sperm is characterized by a high concentration of:",
+                options: ["Haploid chromosomes", "Hydrolytic enzymes", "Mitochondria", "Centrioles"],
+                correct: 2,
+                reasoning: "The text describes the middle piece as containing many mitochondria arranged spirally, which provide energy for tail movement."
+            },
+            {
+                question: "The female gonads, which produce ova and hormones, are the:",
+                options: ["Oviducts", "Ovaries", "Uterus", "Vagina"],
+                correct: 1,
+                reasoning: "The document defines ovaries as the female gonads responsible for producing ova and releasing hormones."
+            },
+            {
+                question: "The site where fertilization typically occurs in the female reproductive system is the:",
+                options: ["Ovary", "Uterus", "Cervix", "Oviduct (Fallopian tube)"],
+                correct: 3,
+                reasoning: "The text states the oviducts receive the ovulated oocyte and are the site where fertilization generally occurs."
+            },
+            {
+                question: "After ovulation, the ruptured follicle is transformed into a temporary endocrine structure called the:",
+                options: ["Graafian follicle", "Corpus albicans", "Corpus luteum", "Antrum"],
+                correct: 2,
+                reasoning: "The document explains that after ovulation, the ruptured follicle is transformed into a glandular structure called the corpus luteum."
+            },
+            {
+                question: "The thick, muscular layer of the uterus that contracts during childbirth is the:",
+                options: ["Endometrium", "Myometrium", "Perimetrium", "Cervix"],
+                correct: 1,
+                reasoning: "The myometrium is described as the middle thick muscular layer that contracts rhythmically during childbirth."
+            },
+            {
+                question: "The inner lining of the uterus into which a fertilized ovum implants is the:",
+                options: ["Myometrium", "Endometrium", "Perimetrium", "Cervix"],
+                correct: 1,
+                reasoning: "The text states that if fertilization occurs, the embryo implants into the endometrium."
+            },
+            {
+                question: "The production of primary oocytes in human females is completed:",
+                options: ["At puberty", "After every menstrual cycle", "Before birth", "After menopause"],
+                correct: 2,
+                reasoning: "The document clearly states that in females, the production of eggs (primary oocytes) begins before birth."
+            },
+            {
+                question: "A primary oocyte is arrested in which stage of meiosis until puberty?",
+                options: ["Prophase I", "Metaphase I", "Prophase II", "Metaphase II"],
+                correct: 0,
+                reasoning: "The text mentions that the oocytes remain at prophase of meiosis I throughout childhood."
+            },
+            {
+                question: "The fluid-filled space that develops in a secondary follicle is called the:",
+                options: ["Cytoplasm", "Antrum", "Vesicle", "Corpus"],
+                correct: 1,
+                reasoning: "The document states that as a primary follicle develops, a fluid-filled space called the antrum develops, and it is then referred to as a secondary follicle."
+            },
+            {
+                question: "The second meiotic division in a female oocyte is completed:",
+                options: ["Before ovulation", "After ovulation but before fertilization", "Only upon fertilization by a sperm", "After implantation"],
+                correct: 2,
+                reasoning: "The text explains that the second meiotic division proceeds only to metaphase and does not continue until a sperm fuses with the oocyte."
+            },
+            {
+                question: "What is the fate of the polar bodies produced during oogenesis?",
+                options: ["They develop into functional ova", "They secrete hormones to support the corpus luteum", "They have no role and eventually degenerate", "They form the placental tissue"],
+                correct: 2,
+                reasoning: "The document explicitly states that all polar bodies are small cells with no role in oogenesis and they eventually degenerate."
+            },
+            {
+                question: "The menstrual cycle is initiated by the rise of which hormone at the end of the previous cycle?",
+                options: ["Progesterone", "Estrogen", "FSH", "LH"],
+                correct: 2,
+                reasoning: "The text states that at the beginning of the menstrual phase, gonadotropins (FSH) are beginning to rise, and then FSH levels begin to rise."
+            },
+            {
+                question: "During which phase of the menstrual cycle does ovulation occur?",
+                options: ["Menstrual phase (Days 1-5)", "Proliferative phase (Days 6-14)", "At the very end of the proliferative phase (Day 14)", "Secretory phase (Days 15-28)"],
+                correct: 2,
+                reasoning: "The document places ovulation at the end of the proliferative stage (day 14) in response to a sudden LH surge."
+            },
+            {
+                question: "The sudden surge of which hormone is the direct trigger for ovulation?",
+                options: ["FSH", "LH", "Estrogen", "Progesterone"],
+                correct: 1,
+                reasoning: "The text states ovulation occurs in response to the sudden release of LH from the anterior pituitary."
+            },
+            {
+                question: "The secretory phase of the uterine cycle is primarily dominated by the hormone:",
+                options: ["Estrogen", "Progesterone", "FSH", "LH"],
+                correct: 1,
+                reasoning: "The document describes the secretory phase as being driven by rising levels of progesterone from the corpus luteum."
+            },
+            {
+                question: "If fertilization does not occur, the decline of which hormone leads to the degeneration of the corpus luteum and the start of menstruation?",
+                options: ["FSH", "LH", "Estrogen", "Progesterone"],
+                correct: 1,
+                reasoning: "The text states the corpus luteum degenerates as LH blood levels decline, leading to a drop in progesterone and the onset of menstruation."
+            },
+            {
+                question: "Menopause is characterized by:",
+                options: ["The start of the first menstrual cycle", "The cessation of the menstrual cycle around age 50", "The phase of most fertility", "A sudden increase in FSH and LH production"],
+                correct: 1,
+                reasoning: "The document defines menopause as the time when the female menstrual cycle ceases around 50 years of age."
+            },
+            {
+                question: "Gonorrhea is caused by:",
+                options: ["Treponema pallidum", "Human Immunodeficiency Virus (HIV)", "Neisseria gonorrhoeae", "A fungal infection"],
+                correct: 2,
+                reasoning: "The text identifies Neisseria gonorrhoeae as the causative agent of gonorrhea."
+            },
+            {
+                question: "A primary symptom of gonorrhea in males is:",
+                options: ["A painless chancre", "Skin rashes and fever", "Urethritis with painful urination and pus discharge", "A breakdown of the immune system"],
+                correct: 2,
+                reasoning: "The document lists urethritis with painful urination and discharge of pus as the most common symptom in males."
+            },
+            {
+                question: "The bacterium responsible for syphilis is:",
+                options: ["Neisseria gonorrhoeae", "Treponema pallidum", "HIV", "Escherichia coli"],
+                correct: 1,
+                reasoning: "The text states syphilis is caused by the spirochete bacterium Treponema pallidum."
+            },
+            {
+                question: "The primary stage of syphilis is typically marked by the appearance of:",
+                options: ["Widespread skin rashes", "A painless ulcer or chancre", "Severe heart and brain complications", "Flu-like symptoms"],
+                correct: 1,
+                reasoning: "The document describes the early stage of syphilis as appearing as sores or a chancre (painless ulcer)."
+            },
+            {
+                question: "The preferred treatment for all stages of syphilis is:",
+                options: ["Azithromycin", "Penicillin", "Ceftriaxone", "Gentamicin"],
+                correct: 1,
+                reasoning: "The text clearly states that the preferred treatment at all stages is penicillin."
+            },
+            {
+                question: "AIDS is caused by:",
+                options: ["A bacterial infection", "A deficiency in diet", "The Human Immunodeficiency Virus (HIV)", "Treponema pallidum"],
+                correct: 2,
+                reasoning: "The document defines AIDS as being caused by the HIV virus (Human Immunodeficiency Virus)."
+            },
+            {
+                question: "HIV primarily targets and replicates inside which cells of the immune system?",
+                options: ["B-lymphocytes", "Red blood cells", "T4 (helper) lymphocytes", "Platelets"],
+                correct: 2,
+                reasoning: "The text states the virus replicates inside the T4 lymphocytes or 'helper' cells."
+            },
+            {
+                question: "A key consequence of HIV infection is:",
+                options: ["Immediate death", "The destruction of the body's immune system", "The formation of painful chancres", "Infertility"],
+                correct: 1,
+                reasoning: "The document explains that the body's immune system breaks down, leaving the patient exposed to opportunistic diseases."
+            },
+            {
+                question: "Aristotle's concept of the 'Scala Naturae' or 'Ladder of Nature' proposed that:",
+                options: ["Species evolve through natural selection", "Each species has a fixed place in a permanent, unchanging hierarchy", "Life originated from non-living matter spontaneously", "Catastrophes shape the diversity of life"],
+                correct: 1,
+                reasoning: "The text describes the Scala Naturae as a permanent and never-changing ladder where each organism's place was ordained during creation."
+            },
+            {
+                question: "The theory that each species was individually created by God and never changes is known as:",
+                options: ["Evolution", "Creationism", "Catastrophism", "Uniformitarianism"],
+                correct: 1,
+                reasoning: "The document defines creationism as the idea that each species was created individually by God and never changed thereafter."
+            },
+            {
+                question: "George Cuvier's theory of catastrophism hypothesized that:",
+                options: ["Earth's geological features are formed by slow, continuous processes", "Fossils represent extinct species killed off by successive catastrophes", "Acquired characteristics can be inherited", "Populations grow faster than their resources"],
+                correct: 1,
+                reasoning: "Cuvier's theory, as described, proposed that successive catastrophes destroyed many species, fossilizing their remains."
+            },
+            {
+                question: "James Hutton and Charles Lyell are associated with the concept of:",
+                options: ["Inheritance of acquired characteristics", "Natural selection", "Uniformitarianism", "Catastrophism"],
+                correct: 2,
+                reasoning: "The text credits Hutton and Lyell with the concept of uniformitarianism, which states that slow natural processes over long periods shape the Earth."
+            },
+            {
+                question: "A key contribution of uniformitarianism to evolutionary theory was:",
+                options: ["Providing a mechanism for evolution", "Proving the fixity of species", "Providing the immense time scale necessary for evolution", "Discovering the role of DNA"],
+                correct: 2,
+                reasoning: "The document states that Hutton and Lyell provided the time for evolution by concluding the Earth was millions of years old."
+            },
+            {
+                question: "Lamarck's theory of evolution was based on:",
+                options: ["The inheritance of acquired characteristics", "Natural selection", "Divine creation", "Genetic mutation"],
+                correct: 0,
+                reasoning: "The text states Lamarck's explanation was based on the inheritance of acquired characters induced by the environment or use/disuse of organs."
+            },
+            {
+                question: "According to Lamarck, the long neck of the giraffe evolved because:",
+                options: ["Natural selected giraffes with longer necks", "Giraffes stretched their necks to reach higher leaves and passed this elongation to offspring", "A mutation randomly caused neck elongation", "Shorter-necked giraffes migrated to different areas"],
+                correct: 1,
+                reasoning: "The text uses the giraffe example to illustrate Lamarck's idea that effort (stretching) results in a structural change that is inherited."
+            },
+            {
+                question: "The main flaw in Lamarck's theory, in light of modern genetics, is that:",
+                options: ["Characteristics acquired during an organism's lifetime cannot be inherited", "Natural selection does not occur", "Species are fixed and do not change", "The Earth is not old enough"],
+                correct: 0,
+                reasoning: "The document concludes that the inheritance of acquired characters is wrong in terms of the principles of genetics."
+            },
+            {
+                question: "Charles Darwin's observations on the Galapagos Islands that were crucial to his theory included:",
+                options: ["The similarity of all species worldwide", "The unique adaptations and diversity of finches and tortoises on different islands", "Evidence of recent catastrophic events", "The spontaneous generation of life"],
+                correct: 1,
+                reasoning: "The text highlights Darwin's surprise at the diversity of giant tortoises and finches on the Galapagos Islands."
+            },
+            {
+                question: "The book that inspired Darwin by discussing the 'struggle for existence' due to overpopulation was written by:",
+                options: ["Alfred Wallace", "Charles Lyell", "Thomas Malthus", "Jean-Baptiste Lamarck"],
+                correct: 2,
+                reasoning: "The document states Darwin read Malthus's 'Essay on the Principle of Population,' which discussed population growth outpacing resources."
+            },
+            {
+                question: "Which of the following is NOT one of the salient features of Darwin-Wallace theory?",
+                options: ["Overproduction", "Struggle for existence", "Inheritance of acquired characteristics", "Natural selection"],
+                correct: 2,
+                reasoning: "The listed features are Overproduction, Struggle for existence, Variation, Natural selection, and Speciation. Inheritance of acquired characteristics is Lamarck's idea."
+            },
+            {
+                question: "Darwin termed the constant competition for limited resources as:",
+                options: ["Overproduction", "Variation", "Struggle for existence", "Survival of the fittest"],
+                correct: 2,
+                reasoning: "The text states Darwin termed the severe competition as 'struggle for existence.'"
+            },
+            {
+                question: "The phrase 'survival of the fittest' is best synonymous with Darwin's concept of:",
+                options: ["Overproduction", "Variation", "Natural selection", "Speciation"],
+                correct: 2,
+                reasoning: "The document notes that Herbert Spencer's term 'survival of the fittest' was synonymous with Darwin's 'natural selection.'"
+            },
+            {
+                question: "According to Darwin, variations that provide an advantage in the struggle for existence are:",
+                options: ["Terminal variations", "Useful variations", "Acquired characteristics", "Random mutations"],
+                correct: 1,
+                reasoning: "Darwin classified variations into two kinds: terminal (disadvantageous) and useful (advantageous)."
+            },
+            {
+                question: "The final outcome of natural selection, over long periods, is:",
+                options: ["The extinction of all variations", "The creation of perfect organisms", "Speciation, or the origin of new species", "The stabilization of population size"],
+                correct: 2,
+                reasoning: "Speciation, the origin of new species, is listed as the fifth and final salient feature of the Darwin-Wallace theory."
+            },
+            {
+                question: "Fossil evidence suggests that eukaryotes evolved from prokaryotes approximately:",
+                options: ["500 million years ago", "1.5 to 2 billion years ago", "4 billion years ago", "10,000 years ago"],
+                correct: 1,
+                reasoning: "The text states fossil records indicate eukaryotes evolved from prokaryotes between 1.5 to 2 billion years ago."
+            }
+        ];
+
+        // DOM Elements
+        const loginForm = document.getElementById('login-form');
+        const studentForm = document.getElementById('student-form');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultContainer = document.getElementById('result-container');
+        const questionNav = document.getElementById('question-nav');
+        const reasoningModal = document.getElementById('reasoning-modal');
+        const modalBody = document.getElementById('modal-body');
+        const closeModal = document.getElementById('close-modal');
+        
+        const accessCodeInput = document.getElementById('access-code');
+        const loginBtn = document.getElementById('login-btn');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const progressBar = document.getElementById('progress-bar');
+        const questionTimerElement = document.getElementById('question-timer');
+        const totalTimerElement = document.getElementById('total-timer');
+        
+        const backBtn = document.getElementById('back-btn');
+        const reasoningBtn = document.getElementById('reasoning-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitQuizBtn = document.getElementById('submit-quiz-btn');
+        
+        const retakeQuizBtn = document.getElementById('retake-quiz-btn');
+        const showReasoningBtn = document.getElementById('show-reasoning-btn');
+        const studentInfoElement = document.getElementById('student-info');
+        
+        // Error elements
+        const loginError = document.getElementById('login-error');
+        const nameError = document.getElementById('name-error');
+        const fatherError = document.getElementById('father-error');
+        const mdcatError = document.getElementById('mdcat-error');
+        const fscError = document.getElementById('fsc-error');
+        const metricError = document.getElementById('metric-error');
+        
+        // Quiz state variables
+        let currentQuestion = 0;
+        let answers = [];
+        let questionTimeLeft = 60;
+        let totalTimeLeft = quizData.length * 60;
+        let questionTimerInterval;
+        let totalTimerInterval;
+        let studentData = {};
+
+        // Event Listeners
+        loginBtn.addEventListener('click', handleLogin);
+        startQuizBtn.addEventListener('click', startQuiz);
+        backBtn.addEventListener('click', goToPreviousQuestion);
+        reasoningBtn.addEventListener('click', showReasoning);
+        skipBtn.addEventListener('click', skipQuestion);
+        nextBtn.addEventListener('click', goToNextQuestion);
+        submitQuizBtn.addEventListener('click', submitQuiz);
+        retakeQuizBtn.addEventListener('click', retakeQuiz);
+        showReasoningBtn.addEventListener('click', showAllReasoning);
+        closeModal.addEventListener('click', () => {
+            reasoningModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === reasoningModal) {
+                reasoningModal.style.display = 'none';
+            }
+        });
+
+        // Allow Enter key to submit forms
+        accessCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
+
+        // Functions
+        function handleLogin() {
+            const accessCode = accessCodeInput.value.trim();
+            
+            if (accessCode === 'Pre-Medix-2030') {
+                loginError.style.display = 'none';
+                loginForm.classList.remove('active');
+                studentForm.classList.add('active');
+            } else if (accessCode === 'Dev-PreMedix-2025') {
+                loginError.style.display = 'none';
+                alert('Developer access granted!');
+                // Directly show quiz for developer
+                loginForm.classList.remove('active');
+                quizContainer.classList.add('active');
+                initializeQuiz();
+            } else {
+                loginError.style.display = 'block';
+            }
+        }
+
+        function validateStudentForm() {
+            let isValid = true;
+            
+            // Reset errors
+            nameError.style.display = 'none';
+            fatherError.style.display = 'none';
+            mdcatError.style.display = 'none';
+            fscError.style.display = 'none';
+            metricError.style.display = 'none';
+            
+            // Validate name
+            if (!studentData.name || studentData.name.trim() === '') {
+                nameError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate father's name
+            if (!studentData.fatherName || studentData.fatherName.trim() === '') {
+                fatherError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate MDCAT appearance
+            if (!studentData.mdcatAppearance) {
+                mdcatError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate FSC marks
+            const fscMarks = parseInt(studentData.fscMarks);
+            const fscTotal = parseInt(studentData.fscTotal);
+            if (isNaN(fscMarks) || fscMarks < 0 || fscMarks > fscTotal) {
+                fscError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate Metric marks
+            const metricMarks = parseInt(studentData.metricMarks);
+            const metricTotal = parseInt(studentData.metricTotal);
+            if (isNaN(metricMarks) || metricMarks < 0 || metricMarks > metricTotal) {
+                metricError.style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        function startQuiz() {
+            // Collect student data
+            studentData = {
+                name: document.getElementById('student-name').value,
+                fatherName: document.getElementById('father-name').value,
+                mdcatAppearance: document.getElementById('mdcat-appearance').value,
+                fscMarks: document.getElementById('fsc-marks').value,
+                fscTotal: document.getElementById('fsc-total').value,
+                metricMarks: document.getElementById('metric-marks').value,
+                metricTotal: document.getElementById('metric-total').value
+            };
+            
+            // Validate form
+            if (!validateStudentForm()) {
+                return;
+            }
+            
+            studentForm.classList.remove('active');
+            quizContainer.classList.add('active');
+            
+            // Initialize quiz
+            initializeQuiz();
+        }
+
+        function initializeQuiz() {
+            // Create question navigation buttons
+            questionNav.innerHTML = '';
+            quizData.forEach((_, index) => {
+                const button = document.createElement('button');
+                button.className = 'question-btn';
+                button.textContent = index + 1;
+                button.addEventListener('click', () => {
+                    currentQuestion = index;
+                    loadQuestion();
+                });
+                questionNav.appendChild(button);
+            });
+            
+            // Initialize answers array
+            answers = new Array(quizData.length).fill(undefined);
+            
+            // Load first question
+            loadQuestion();
+            startTimers();
+        }
+
+        function loadQuestion() {
+            const question = quizData[currentQuestion];
+            questionElement.innerHTML = `<b>${currentQuestion + 1}. ${question.question}</b>`;
+            
+            // Update progress bar
+            progressBar.style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Add new options
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (answers[currentQuestion] !== undefined && answers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update navigation buttons
+            backBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = false;
+            submitQuizBtn.style.display = currentQuestion === quizData.length - 1 ? 'block' : 'none';
+            nextBtn.style.display = currentQuestion === quizData.length - 1 ? 'none' : 'block';
+            
+            // Update question navigation
+            updateQuestionNavigation();
+            
+            // Reset question timer
+            questionTimeLeft = 60;
+            updateQuestionTimer();
+        }
+
+        function updateQuestionNavigation() {
+            const navButtons = questionNav.querySelectorAll('.question-btn');
+            navButtons.forEach((button, index) => {
+                button.classList.remove('current', 'answered');
+                
+                if (index === currentQuestion) {
+                    button.classList.add('current');
+                }
+                
+                if (answers[index] !== undefined) {
+                    button.classList.add('answered');
+                }
+            });
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            updateQuestionNavigation();
+            loadQuestion();
+        }
+
+        function showReasoning() {
+            const question = quizData[currentQuestion];
+            modalBody.innerHTML = `
+                <h4>${currentQuestion + 1}. ${question.question}</h4>
+                <p><strong>Correct Answer:</strong> ${question.options[question.correct]}</p>
+                <p><strong>Explanation:</strong> ${question.reasoning}</p>
+            `;
+            reasoningModal.style.display = 'flex';
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        }
+
+        function skipQuestion() {
+            answers[currentQuestion] = undefined;
+            updateQuestionNavigation();
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function goToNextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function startTimers() {
+            // Clear any existing timers
+            clearInterval(questionTimerInterval);
+            clearInterval(totalTimerInterval);
+            
+            // Question timer
+            questionTimerInterval = setInterval(() => {
+                questionTimeLeft--;
+                updateQuestionTimer();
+                
+                if (questionTimeLeft <= 0) {
+                    clearInterval(questionTimerInterval);
+                    goToNextQuestion();
+                }
+            }, 1000);
+            
+            // Total timer
+            totalTimerInterval = setInterval(() => {
+                totalTimeLeft--;
+                updateTotalTimer();
+                
+                if (totalTimeLeft <= 0) {
+                    clearInterval(totalTimerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateQuestionTimer() {
+            const minutes = Math.floor(questionTimeLeft / 60);
+            const seconds = questionTimeLeft % 60;
+            questionTimerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Change color when time is running out
+            if (questionTimeLeft <= 10) {
+                questionTimerElement.style.color = '#e63946';
+            } else {
+                questionTimerElement.style.color = 'inherit';
+            }
+        }
+
+        function updateTotalTimer() {
+            const minutes = Math.floor(totalTimeLeft / 60);
+            const seconds = totalTimeLeft % 60;
+            totalTimerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Change color when time is running out
+            if (totalTimeLeft <= 60) {
+                totalTimerElement.style.color = '#e63946';
+            } else {
+                totalTimerElement.style.color = 'inherit';
+            }
+        }
+
+        function submitQuiz() {
+            clearInterval(questionTimerInterval);
+            clearInterval(totalTimerInterval);
+            
+            quizContainer.classList.remove('active');
+            resultContainer.classList.add('active');
+            
+            // Calculate results
+            let correct = 0;
+            let incorrect = 0;
+            let skipped = 0;
+            
+            answers.forEach((answer, index) => {
+                if (answer === undefined) {
+                    skipped++;
+                } else if (answer === quizData[index].correct) {
+                    correct++;
+                } else {
+                    incorrect++;
+                }
+            });
+            
+            const totalMarks = quizData.length;
+            const marksObtained = correct;
+            const percentage = ((correct / totalMarks) * 100).toFixed(2);
+            
+            // Update result table
+            document.getElementById('total-correct').textContent = correct;
+            document.getElementById('total-incorrect').textContent = incorrect;
+            document.getElementById('total-skipped').textContent = skipped;
+            document.getElementById('marks-obtained').textContent = `${marksObtained}/${totalMarks}`;
+            document.getElementById('percentage').textContent = `${percentage}%`;
+            
+            // Display student info
+            studentInfoElement.innerHTML = `
+                <h3>Student Information</h3>
+                <p><strong>Name:</strong> ${studentData.name}</p>
+                <p><strong>Father's Name:</strong> ${studentData.fatherName}</p>
+                <p><strong>MDCAT Appearance:</strong> ${studentData.mdcatAppearance.charAt(0).toUpperCase() + studentData.mdcatAppearance.slice(1)}</p>
+                <p><strong>FSC Marks:</strong> ${studentData.fscMarks}/${studentData.fscTotal}</p>
+                <p><strong>Metric Marks:</strong> ${studentData.metricMarks}/${studentData.metricTotal}</p>
+            `;
+        }
+        
+        function showAllReasoning() {
+            const reasoningContainer = document.createElement('div');
+            reasoningContainer.className = 'reasoning-container';
+            reasoningContainer.style.marginTop = '0';
+            
+            quizData.forEach((question, index) => {
+                const reasoningItem = document.createElement('div');
+                reasoningItem.className = 'reasoning-item';
+                
+                // Determine if the answer was correct, incorrect, or skipped
+                let answerStatus = '';
+                if (answers[index] === undefined) {
+                    answerStatus = '<span style="color: #6c757d;">(Skipped)</span>';
+                } else if (answers[index] === question.correct) {
+                    answerStatus = '<span style="color: #4ade80;">(Correct)</span>';
+                } else {
+                    answerStatus = '<span style="color: #f87171;">(Incorrect)</span>';
+                }
+                
+                reasoningItem.innerHTML = `
+                    <h4>Question ${index + 1}: ${question.question} ${answerStatus}</h4>
+                    <p><strong>Your Answer:</strong> ${answers[index] !== undefined ? question.options[answers[index]] : 'Skipped'}</p>
+                    <p><strong>Correct Answer:</strong> ${question.options[question.correct]}</p>
+                    <p><strong>Reasoning:</strong> ${question.reasoning}</p>
+                `;
+                
+                reasoningContainer.appendChild(reasoningItem);
+            });
+            
+            modalBody.innerHTML = '';
+            modalBody.appendChild(reasoningContainer);
+            reasoningModal.style.display = 'flex';
+        }
+
+        function retakeQuiz() {
+            if (confirm('Are you sure you want to retake the quiz? Your current progress will be lost.')) {
+                // Reset quiz state
+                currentQuestion = 0;
+                answers = [];
+                questionTimeLeft = 60;
+                totalTimeLeft = quizData.length * 60;
+                
+                // Show quiz container
+                resultContainer.classList.remove('active');
+                quizContainer.classList.add('active');
+                
+                // Re-initialize quiz
+                initializeQuiz();
+            }
+        }
+    </script>
+</body>
+</html>
